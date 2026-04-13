@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import path from 'node:path'
 import fs from 'node:fs'
 import prisma from '@/lib/db'
+import { getStorageDir } from '@/lib/storage'
 
-const GUIDELINES_DIR = path.join(process.cwd(), 'storage', 'brand-guidelines')
+const getGuidelinesDir = () => getStorageDir('brand-guidelines')
 
 export async function GET() {
   try {
@@ -26,10 +27,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Yalnızca PDF dosyaları kabul edilir' }, { status: 400 })
     }
 
-    fs.mkdirSync(GUIDELINES_DIR, { recursive: true })
+    const guidelinesDir = getGuidelinesDir()
 
     const safeFilename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._\-]/g, '_')}`
-    const filePath = path.join(GUIDELINES_DIR, safeFilename)
+    const filePath = path.join(guidelinesDir, safeFilename)
     const buffer = Buffer.from(await file.arrayBuffer())
     fs.writeFileSync(filePath, buffer)
 

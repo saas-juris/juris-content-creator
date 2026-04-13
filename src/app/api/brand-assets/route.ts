@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import path from 'node:path'
 import fs from 'node:fs'
 import prisma from '@/lib/db'
+import { getStorageDir } from '@/lib/storage'
 
-const BRAND_DIR = path.join(process.cwd(), 'storage', 'brand-assets')
+const getBrandDir = () => getStorageDir('brand-assets')
 
 export async function GET() {
   try {
@@ -23,7 +24,8 @@ export async function POST(req: NextRequest) {
 
     const ext = file.name.split('.').pop() || 'png'
     const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`
-    const subDir = category === 'external-logo' ? path.join(BRAND_DIR, 'external') : BRAND_DIR
+    const brandDir = getBrandDir()
+    const subDir = category === 'external-logo' ? path.join(brandDir, 'external') : brandDir
     fs.mkdirSync(subDir, { recursive: true })
 
     const buffer = Buffer.from(await file.arrayBuffer())

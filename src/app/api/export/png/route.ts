@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import path from 'node:path'
 import fs from 'node:fs'
 import prisma from '@/lib/db'
+import { getStorageDir } from '@/lib/storage'
 import { generateSlides } from '@/lib/ai/writer'
 import { buildSlidesHtml, buildPostSquareHtml } from '@/lib/export/templates'
 import { renderAllSlides } from '@/lib/export/renderer'
@@ -48,7 +49,7 @@ export async function POST(req: NextRequest) {
     const pngBuffers = await renderAllSlides(slidesHtml, fmt)
 
     // Save to filesystem
-    const contentDir = path.join(process.cwd(), 'storage', 'content', itemId, 'slides')
+    const contentDir = getStorageDir('content', itemId, 'slides')
     fs.mkdirSync(contentDir, { recursive: true })
     const pngPaths: string[] = []
     for (let i = 0; i < pngBuffers.length; i++) {

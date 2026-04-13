@@ -1,14 +1,19 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "pnpm install && pnpm prisma migrate deploy && pnpm build"
+# Install deps → push DB schema → seed → build Next.js
+buildCommand = "pnpm install && pnpm prisma db push && pnpm db:seed && pnpm build"
 
 [deploy]
 startCommand = "pnpm start"
 healthcheckPath = "/api/health"
-healthcheckTimeout = 30
+healthcheckTimeout = 60
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 3
 
 [environments.production.variables]
 NODE_ENV = "production"
 NEXT_TELEMETRY_DISABLED = "1"
+# Puppeteer: use system Chromium installed by Nixpacks
+PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = "true"
+# Nixpacks installs Chromium at this path on Railway's Linux environment
+PUPPETEER_EXECUTABLE_PATH = "/usr/bin/chromium-browser"

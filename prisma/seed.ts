@@ -104,7 +104,7 @@ async function main() {
   const userCount = await prisma.user.count()
   if (userCount === 0) {
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@juris.av.tr'
-    const adminPassword = process.env.ADMIN_PASSWORD || 'JurisAdmin2025!'
+    const adminPassword = process.env.ADMIN_PASSWORD || `JurisAdmin${new Date().getFullYear()}!`
     const passwordHash = await bcrypt.hash(adminPassword, 12)
     await prisma.user.create({
       data: {

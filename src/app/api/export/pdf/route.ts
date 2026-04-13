@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import path from 'node:path'
 import fs from 'node:fs'
 import prisma from '@/lib/db'
+import { getStorageDir } from '@/lib/storage'
 import { renderAllSlides, buildPdf } from '@/lib/export/renderer'
 import { LINKEDIN_FORMATS } from '@/lib/brand.config'
 
@@ -20,9 +21,8 @@ export async function GET(req: NextRequest) {
     const pngBuffers = await renderAllSlides(slidesHtml, fmt)
     const pdfBuffer = await buildPdf(pngBuffers, fmt)
 
-    // Save PDF
-    const exportDir = path.join(process.cwd(), 'storage', 'content', itemId, 'export')
-    fs.mkdirSync(exportDir, { recursive: true })
+    // Save PDF (also serves as cache; on Railway this goes to the Volume)
+    const exportDir = getStorageDir('content', itemId, 'export')
     fs.writeFileSync(path.join(exportDir, 'carousel.pdf'), pdfBuffer)
 
     const safeName = item.title.slice(0, 30).replace(/[^a-zA-Z0-9\u00C0-\u024F]/g, '_')
