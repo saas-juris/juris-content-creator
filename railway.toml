@@ -1,20 +1,15 @@
 [build]
-builder = "NIXPACKS"
-# Build only — DB ops run at startup when Volume is mounted
-buildCommand = "pnpm install && pnpm build"
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
 
 [deploy]
-# Volume is mounted here — push schema + seed + start
-startCommand = "pnpm prisma db push && pnpm db:seed && pnpm start"
 healthcheckPath = "/api/health"
-healthcheckTimeout = 60
+healthcheckTimeout = 120
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 3
 
 [environments.production.variables]
 NODE_ENV = "production"
 NEXT_TELEMETRY_DISABLED = "1"
-# Puppeteer: use system Chromium installed by Nixpacks
 PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = "true"
-# Nixpacks installs Chromium at this path on Railway's Linux environment
-PUPPETEER_EXECUTABLE_PATH = "/usr/bin/chromium-browser"
+PUPPETEER_EXECUTABLE_PATH = "/usr/bin/chromium"
