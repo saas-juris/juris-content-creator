@@ -1,10 +1,11 @@
 [build]
 builder = "NIXPACKS"
-# Install deps → push DB schema → seed → build Next.js
-buildCommand = "pnpm install && pnpm prisma db push && pnpm db:seed && pnpm build"
+# Build only — DB ops run at startup when Volume is mounted
+buildCommand = "pnpm install && pnpm build"
 
 [deploy]
-startCommand = "pnpm start"
+# Volume is mounted here — push schema + seed + start
+startCommand = "pnpm prisma db push && pnpm db:seed && pnpm start"
 healthcheckPath = "/api/health"
 healthcheckTimeout = 60
 restartPolicyType = "ON_FAILURE"
