@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model ContentPlan {
+  id           String        @id @default(cuid())
+  title        String
+  importedFrom String?
+  createdAt    DateTime      @default(now())
+  items        ContentItem[]
+}
+
+model ContentItem {
+  id             String      @id @default(cuid())
+  planId         String
+  plan           ContentPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  date           DateTime
+  dayOfWeek      String
+  weekNumber     Int
+  weekTheme      String
+  contentType    String
+  dikwLevel      String
+  title          String
+  subtitle       String?
+  topic          String
+  targetAudience String
+  format         String
+  hashtags       String
+  funnelStage    String      @default("MOFU")
+
+  researchText   String?
+  bodyText       String?
+  legalSources   String?
+  slidesHtml     String?
+  slidesPngPaths String?
+
+  status         String      @default("planned")
+  reviewNotes    String?
+  approvedBy     String?
+  approvedAt     DateTime?
+  publishedAt    DateTime?
+  bufferSent     Boolean     @default(false)
+
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+model LegalSource {
+  id        String  @id @default(cuid())
+  code      String
+  title     String
+  shortDesc String
+  type      String
+  url       String?
+}
+
+model BrandAsset {
+  id        String   @id @default(cuid())
+  name      String
+  filename  String
+  category  String
+  path      String
+  createdAt DateTime @default(now())
+}
+
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+// ─── Authentication ─────────────────────────────────────────────────────────
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String
+  passwordHash String
+  role         String    @default("EDITOR") // ADMIN | EDITOR | REVIEWER
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model InviteToken {
+  id        String    @id @default(cuid())
+  token     String    @unique
+  email     String
+  role      String    @default("EDITOR")
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+// ─── Content Formats ─────────────────────────────────────────────────────────
+
+model ContentFormat {
+  id             String   @id @default(cuid())
+  name           String
+  icon           String   @default("📄")
+  category       String   @default("Dijital")
+  description    String   @default("")
+  designLanguage String   @default("")
+  scope          String   @default("")
+  dimensions     String   @default("")
+  isActive       Boolean  @default(true)
+  sortOrder      Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
