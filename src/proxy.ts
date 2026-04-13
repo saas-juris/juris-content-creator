@@ -13,7 +13,7 @@ function isPublic(pathname: string) {
   return PUBLIC_PATHS.some(p => pathname.startsWith(p))
 }
 
-export default auth(async function middleware(req: NextRequest & { auth?: { user?: unknown } }) {
+export default auth(async function proxy(req: NextRequest & { auth?: { user?: unknown } }) {
   const { pathname } = req.nextUrl
 
   // Allow public paths

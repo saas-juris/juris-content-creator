@@ -104,9 +104,9 @@ export default function LoginPage() {
             <div className="inline-flex items-center gap-3 mb-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/api/serve-asset/Juris%20Brand%20Assets/juris-lacivert-01.png"
+                src="/api/serve-asset/Juris%20Brand%20Assets/juris-beyaz-01.png"
                 alt="Juris"
-                className="h-10 w-auto object-contain"
+                className="h-10 w-auto object-contain invert"
                 onError={e => {
                   const t = e.currentTarget
                   t.style.display = 'none'
