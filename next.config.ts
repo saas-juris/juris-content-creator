@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
+  output: 'standalone',
   // Serve brand-assets from /storage/brand-assets via /brand-assets URL
   async rewrites() {
     return [

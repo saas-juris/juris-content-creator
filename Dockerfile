@@ -1,4 +1,4 @@
-FROM node:22-bookworm-slim
+FROM node:22.14-bookworm-slim
 
 # Install Chromium + system deps for Puppeteer
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -23,23 +23,25 @@ WORKDIR /app
 
 # Copy package files
 COPY package.json pnpm-lock.yaml ./
+COPY prisma ./prisma
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
-# Copy rest of source
-COPY . .
-
 # Generate Prisma client
 RUN pnpm prisma generate
 
-# Build Next.js
+# Copy rest of source
+COPY . .
+
+# Build Next.js (standalone output)
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
 RUN pnpm build
 
 EXPOSE 3000
 
-ENV NODE_ENV=production
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
-CMD pnpm prisma db push && pnpm db:seed && pnpm start
+CMD pnpm prisma db push && pnpm db:seed && node .next/standalone/server.js
