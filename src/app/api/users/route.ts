@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
 import { auth } from '@/lib/auth'
 
-function requireAdmin(session: Awaited<ReturnType<typeof auth>>) {
-  if (!session?.user || (session.user as { role?: string }).role !== 'ADMIN') {
+type SessionUser = { id?: string; email?: string | null; name?: string | null; role?: string }
+
+function requireAdmin(session: { user?: SessionUser } | null) {
+  if (!session?.user || session.user.role !== 'ADMIN') {
     return NextResponse.json({ error: 'Yetkisiz' }, { status: 403 })
   }
   return null

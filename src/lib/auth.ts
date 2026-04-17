@@ -1,7 +1,21 @@
-import NextAuth from 'next-auth'
+import NextAuth, { type DefaultSession } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
 import prisma from '@/lib/db'
+
+// Extend NextAuth types
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      id: string
+      role: string
+    } & DefaultSession['user']
+  }
+  interface User {
+    role?: string
+  }
+}
+
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
@@ -14,7 +28,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id
-        token.role = (user as { role?: string }).role ?? 'EDITOR'
+        token.role = user.role ?? 'EDITOR'
         token.name = user.name
         token.email = user.email
       }
