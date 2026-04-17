@@ -1,8 +1,9 @@
 name: Deploy to Railway
 
 on:
-  workflow_dispatch:
-    # Manuel tetikleme — Railway GitHub App entegrasyonu aktifken bu workflow pasif
+  push:
+    branches:
+      - master
 
 jobs:
   deploy:
